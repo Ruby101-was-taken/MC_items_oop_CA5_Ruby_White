@@ -15,21 +15,42 @@ public class App
     }
     public void start() {
 
-        System.out.println("\nSample 1 - Connecting to MySQL Database called \"test\" using MySQL JDBC Driver");
+        System.out.println("\nSample 1 - Connecting to MySQL Database called \"mc_items\" using MySQL JDBC Driver");
 
         String url = "jdbc:mysql://localhost/";
         String dbName = "mc_items";
         String userName = "root";   // default
         String password = "";       // default
 
-         try ( Connection conn =
-                       DriverManager.getConnection(url + dbName, userName, password) )
+         try ( Connection conn = DriverManager.getConnection(url + dbName, userName, password) )
         {
-            System.out.println("SUCCESS ! - Your program has successfully connected to the MySql Database Server. Well done.");
-            System.out.println("... we could query the database using the SQL commands you learned in DBMS...");
-            System.out.println("... but for now, we will simply close the connection.");
+            System.out.println("\nConnected to the database.");
 
-            System.out.println("Your program is disconnecting from the database - goodbye.");
+            // Statements allow us to issue SQL queries to the database
+            Statement statement = conn.createStatement();
+
+            // ResultSet stores the result from the SQL query
+            String sqlQuery = "select * from blocks";
+            ResultSet resultSet = statement.executeQuery( sqlQuery );
+
+            // Iterate over the resultSet to process every row
+            while ( resultSet.next() )
+            {
+                // Columns can be identified by column name or by number
+                // The first column is number 1   e.g. resultSet.getString(2);
+
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+
+                float hardness = resultSet.getFloat(3);  // get third value using index, i.e lastName
+
+
+                System.out.print("ID = " + id + ", ");
+                System.out.print("Name = " + name + ", ");
+                System.out.print("Hardness = " + hardness + ", ");
+                System.out.println();
+            }
+            System.out.println("\nFinished - Disconnected from database");
         }
         catch (SQLException ex)
         {
