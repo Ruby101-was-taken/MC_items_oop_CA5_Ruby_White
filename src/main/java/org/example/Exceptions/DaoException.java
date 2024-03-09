@@ -1,9 +1,7 @@
 package org.example.Exceptions;
 
-/**     Feb 2022
- * A 'homemade' Exception to report exceptions
- *  arising in the Data Access Layer.
- */
+// started by Ruby 9/3/2024 :3
+
 import java.sql.SQLException;
 
 public class DaoException extends SQLException

@@ -1,4 +1,7 @@
 package org.example.DAOs;
+
+// started by Ruby 9/3/2024 :3
+
 /** MySqlDao -
  * - implements functionality that is common to all MySQL DAOs
  * - i.e. getConection() and freeConnection()

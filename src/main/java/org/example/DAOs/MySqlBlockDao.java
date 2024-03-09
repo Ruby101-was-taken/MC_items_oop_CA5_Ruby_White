@@ -1,5 +1,7 @@
 package org.example.DAOs;
 
+// started by Ruby 9/3/2024 :3
+
 /** OOP Feb 2024
  *
  * Data Access Object (DAO) for User table with MySQL-specific code
@@ -33,7 +35,7 @@ import java.util.List;
 public class MySqlBlockDao extends MySqlDao implements BlockDaoInterface
 {
     /**
-     * Will access and return a List of all users in User database table
+     * Will access and return a List of all blocks in Items (oops) database table
      * @return List of User objects
      * @throws DaoException
      */
