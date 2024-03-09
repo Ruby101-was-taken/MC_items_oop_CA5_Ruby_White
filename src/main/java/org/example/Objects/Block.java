@@ -13,4 +13,15 @@ public class Block {
         this.blastResist = blastResist;
         this.gravityAffected = gravityAffected;
     }
+
+    @Override
+    public String toString() {
+        return "Block{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", hardness=" + hardness +
+                ", blastResist=" + blastResist +
+                ", gravityAffected=" + gravityAffected +
+                '}';
+    }
 }

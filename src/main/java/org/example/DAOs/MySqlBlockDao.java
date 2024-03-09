@@ -1,4 +1,4 @@
-package com.dkit.oop.sd2.DAOs;
+package org.example.DAOs;
 
 /** OOP Feb 2024
  *
@@ -38,12 +38,12 @@ public class MySqlBlockDao extends MySqlDao implements BlockDaoInterface
      * @throws DaoException
      */
     @Override
-    public List<Block> findAllBlocks() throws DaoException;
+    public List<Block> findAllBlocks() throws DaoException
     {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        List<Block> usersList = new ArrayList<>();
+        List<Block> blockList = new ArrayList<>();
 
         try
         {
@@ -64,7 +64,7 @@ public class MySqlBlockDao extends MySqlDao implements BlockDaoInterface
                 double blastResistance = resultSet.getDouble("blast_resistance");
                 boolean gravityAffected = resultSet.getBoolean("gravity_affected");
                 Block blockToAdd = new Block(id, name, hardness, blastResistance, gravityAffected);
-                usersList.add(blockToAdd);
+                blockList.add(blockToAdd);
             }
         } catch (SQLException e)
         {
@@ -90,7 +90,7 @@ public class MySqlBlockDao extends MySqlDao implements BlockDaoInterface
                 throw new DaoException("findAllUsers() " + e.getMessage());
             }
         }
-        return usersList;     // may be empty
+        return blockList;     // may be empty
     }
 }
 

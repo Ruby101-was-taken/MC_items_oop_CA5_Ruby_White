@@ -1,6 +1,13 @@
 package org.example;        // Feb 2023
 
+import org.example.DAOs.BlockDaoInterface;
+import org.example.DAOs.MySqlBlockDao;
+import org.example.Exceptions.DaoException;
+import org.example.Objects.Block;
+
 import java.sql.*;
+import java.util.List;
+
 /**
  * Connecting to a MySQL Database Server.
  * This program simply attempts to connect to a database - but does nothing else.
@@ -9,53 +16,42 @@ import java.sql.*;
 
 public class App
 {
-    public static void main(String[] args) {
-        App app = new App();
-        app.start();
-    }
-    public void start() {
+    public static void main(String[] args)
+    {
+        BlockDaoInterface IUserDao = new MySqlBlockDao();  //"IUserDao" -> "I" stands for for
 
-        System.out.println("\nSample 1 - Connecting to MySQL Database called \"mc_items\" using MySQL JDBC Driver");
+//        // Notice that the userDao reference is an Interface type.
+//        // This allows for the use of different concrete implementations.
+//        // e.g. we could replace the MySqlUserDao with an OracleUserDao
+//        // (accessing an Oracle Database)
+//        // without changing anything in the Interface.
+//        // If the Interface doesn't change, then none of the
+//        // code in this file that uses the interface needs to change.
+//        // The 'contract' defined by the interface will not be broken.
+//        // This means that this code is 'independent' of the code
+//        // used to access the database. (Reduced coupling).
+//
+//        // The Business Objects require that all User DAOs implement
+//        // the interface called "UserDaoInterface", as the code uses
+//        // only references of the interface type to access the DAO methods.
 
-        String url = "jdbc:mysql://localhost/";
-        String dbName = "mc_items";
-        String userName = "root";   // default
-        String password = "";       // default
-
-         try ( Connection conn = DriverManager.getConnection(url + dbName, userName, password) )
+        try
         {
-            System.out.println("\nConnected to the database.");
+            System.out.println("\nCall findAllBlocks()");
+            List<Block> blocks = IUserDao.findAllBlocks();     // call a method in the DAO
 
-            // Statements allow us to issue SQL queries to the database
-            Statement statement = conn.createStatement();
-
-            // ResultSet stores the result from the SQL query
-            String sqlQuery = "select * from blocks";
-            ResultSet resultSet = statement.executeQuery( sqlQuery );
-
-            // Iterate over the resultSet to process every row
-            while ( resultSet.next() )
-            {
-                // Columns can be identified by column name or by number
-                // The first column is number 1   e.g. resultSet.getString(2);
-
-                int id = resultSet.getInt("id");
-                String name = resultSet.getString("name");
-
-                float hardness = resultSet.getFloat(3);  // get third value using index, i.e lastName
-
-
-                System.out.print("ID = " + id + ", ");
-                System.out.print("Name = " + name + ", ");
-                System.out.print("Hardness = " + hardness + ", ");
-                System.out.println();
+            if( blocks.isEmpty() )
+                System.out.println("There are no Blocks");
+            else {
+                for (Block block : blocks)
+                    System.out.println("Block: " + block.toString());
             }
-            System.out.println("\nFinished - Disconnected from database");
+
+
         }
-        catch (SQLException ex)
+        catch(DaoException e )
         {
-            System.out.println("Failed to connect to database - check that you have started the MySQL from XAMPP, and that your connection details are correct.");
-            ex.printStackTrace();
+            e.printStackTrace();
         }
     }
 }
