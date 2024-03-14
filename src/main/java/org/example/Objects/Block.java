@@ -16,6 +16,46 @@ public class Block {
         this.gravityAffected = gravityAffected;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public double getHardness() {
+        return hardness;
+    }
+
+    public void setHardness(double hardness) {
+        this.hardness = hardness;
+    }
+
+    public double getBlastResist() {
+        return blastResist;
+    }
+
+    public void setBlastResist(double blastResist) {
+        this.blastResist = blastResist;
+    }
+
+    public boolean isGravityAffected() {
+        return gravityAffected;
+    }
+
+    public void setGravityAffected(boolean gravityAffected) {
+        this.gravityAffected = gravityAffected;
+    }
+
     @Override
     public String toString() {
         return "Block{" +

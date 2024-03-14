@@ -20,13 +20,13 @@ public class App
 {
     public static void main(String[] args)
     {
-        BlockDaoInterface IUserDao = new MySqlBlockDao();  //"IUserDao" -> "I" stands for for
+        BlockDaoInterface IBlockDao = new MySqlBlockDao();  //"IBlockDao" -> "I" stands for for
 
 
         try
         {
             System.out.println("\nCall findAllBlocks()");
-            List<Block> blocks = IUserDao.findAllBlocks();     // call a method in the DAO
+            List<Block> blocks = IBlockDao.findAllBlocks();     // call a method in the DAO
 
             if( blocks.isEmpty() )
                 System.out.println("There are no Blocks");
@@ -41,6 +41,18 @@ public class App
         {
             e.printStackTrace();
         }
+
+        try
+        {
+            System.out.println("\nCall insertABlock()");
+
+            IBlockDao.insertABlock(new Block(0, "Cobbled DeepSlate", 10, 10, false));
+
+
+        }
+        catch(DaoException e )
+        {
+            e.printStackTrace();
+        }
     }
 }
-
