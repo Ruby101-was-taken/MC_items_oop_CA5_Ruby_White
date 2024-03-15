@@ -1,16 +1,13 @@
-package org.example.Exceptions;
-
-// started by Ruby 9/3/2024 :3
+package Exceptions;
 
 import java.sql.SQLException;
 
+/**
+ *  Taken from oop-data-access-layer-sample-1
+ */
 public class DaoException extends SQLException
 {
-    public DaoException()
-    {
-        // not used
-    }
-
+    public DaoException() {}
     public DaoException(String aMessage)
     {
         super(aMessage);

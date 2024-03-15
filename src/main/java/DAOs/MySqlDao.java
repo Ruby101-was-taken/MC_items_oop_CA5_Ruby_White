@@ -1,20 +1,12 @@
-package org.example.DAOs;
-
-// started by Ruby 9/3/2024 :3
-
-/** MySqlDao -
- * - implements functionality that is common to all MySQL DAOs
- * - i.e. getConection() and freeConnection()
- * All MySQL DAOs will extend (inherit from) this class in order to
- * gain the connection functionality, thus avoiding inclusion
- * of this code in every DAO class.
- *
- */
+package DAOs;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import org.example.Exceptions.DaoException;
+import Exceptions.DaoException;
+
+/** Base code taken from oop-data-access-layer-sample-1
+ */
 
 public class MySqlDao
 {
