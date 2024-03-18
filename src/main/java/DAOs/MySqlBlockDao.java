@@ -6,9 +6,11 @@ import Exceptions.DaoException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /** Base code taken from oop-data-access-layer-sample-1
- *  Rewritten by Jakub Polacek
+ *  Rewritten by Jakub Polacek and Ruby :3
  *  Methods/features added over time by the group
  */
 
@@ -134,6 +136,48 @@ public class MySqlBlockDao extends MySqlDao implements BlockDaoInterface
         return null;
     }
 
+    /**
+     *  Feature 3 - Delete block from database by ID
+     *  Method implementation by Hannah Kellett, written 18/03/2024 (late but shhh)
+     *
+     *  Updated to return the deleted block by Ruby 18/03/24
+     **/
+
+    public Block deleteBlockById(int blockID) throws DaoException  {
+        Connection connection = null;
+
+        Block deletedBlock = null;
+
+        try{
+            connection = this.getConnection();
+
+            deletedBlock = this.getBlockById(blockID);
+
+            Statement st = connection.createStatement();
+            st.executeQuery("delete * from blocks where id = " + blockID);
+        }
+        catch(SQLException e)
+        {
+            throw new DaoException("deleteBlockByID() " + e.getMessage());
+        }
+        finally
+        {
+            try
+            {
+                if(connection!=null) {
+                    freeConnection(connection);
+                }
+
+                return deletedBlock;
+            }
+            catch(SQLException e)
+            {
+                throw new DaoException("deleteBlockByID() " + e.getMessage());
+            }
+        }
+    }
+
+
 
     /**
      *  Feature 4 - insert new block into database
@@ -188,5 +232,68 @@ public class MySqlBlockDao extends MySqlDao implements BlockDaoInterface
                 throw new DaoException("Error closing resources: " + ex.getMessage());
             }
         }
+    }
+    /**
+     * Feature 5 - update entity by ID
+     * Made by Hannah Kellett
+     */
+    public void updateBlockByID(int blockID, Block block) throws DaoException
+    {
+        Connection connection = null;
+        PreparedStatement ps = null;
+
+        try
+        {
+            connection = this.getConnection();
+
+            String query = "UPDATE blocks" +
+                    "\nSET name = ?, hardness = ?, blast_resistance = ?, gravity_affected = ?" +
+                    "\nWHERE id = ?";
+
+            ps = connection.prepareStatement(query);
+            ps.setString(1, block.getName());
+            ps.setDouble(2, block.getHardness());
+            ps.setDouble(3, block.getBlastResistance());
+            ps.setBoolean(4, block.isGravityAffected());
+            ps.setInt(5, blockID);
+
+            ps.executeUpdate();
+        }
+        catch(SQLException e)
+        {
+            throw new DaoException("Error updating block: " + e.getMessage());
+        }
+        finally
+        {
+            try
+            {
+                if(ps!=null)
+                {
+                    ps.close();
+                }
+                if(connection!=null)
+                {
+                    connection.close();
+                }
+            }
+            catch(SQLException e)
+            {
+                throw new DaoException("Error closing resources: " + e.getMessage());
+            }
+        }
+    }
+    /**
+     *  Feature 6 - get filtered list of blocks
+     *  Made by Jakub Polacek
+     *  Uses java streams, pipeline of object references and methods for use with bigger data sets
+     *  Takes in a predicate - a lambda function or method reference to filter the blocks by
+     *  example of method ref: 'Block::getGravityAffected'
+     *  example of lambda: '(e) -> e.getHardness() == 0.6' or '(e) -> e.getName().equals("Cobble")'
+     */
+
+    @Override
+    public List<Block> findBlocksUsingFilter(Predicate<Block> filter) throws DaoException
+    {
+        return findAllBlocks().stream().filter(filter).collect(Collectors.toList());
     }
 }
