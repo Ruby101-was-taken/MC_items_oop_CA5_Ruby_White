@@ -19,6 +19,34 @@ public class MainApp
 
     }
 
+
+    public static Block createBlock(){
+
+        Scanner key = new Scanner(System.in);
+
+        System.out.print("Enter the name (or enter \"Close\" to exit): ");
+        String name = key.nextLine();
+
+        Block newBlock = null;
+
+        if(!name.equalsIgnoreCase("close")) {
+
+            System.out.print("Enter the hardness: ");
+            double hardness = key.nextDouble();
+
+            System.out.print("Enter the blast resistance: ");
+            double blastResistance = key.nextDouble();
+
+            System.out.print("Is gravity affected? (0 = False, 1 = True): ");
+            boolean gravityAffected = (key.nextInt() == 0) ? false : true;
+
+            newBlock = new Block(name, hardness, blastResistance, gravityAffected);
+        }
+
+
+        return newBlock;
+    }
+
     /**
      Menu by Ruby 18/03/24
      */
@@ -60,7 +88,8 @@ public class MainApp
         editMenu.addMenuItems(new MenuItem[]{
                 mainMenu,
                 new MenuItem("Add a Block", "Lets you add a new block to the database"),
-                new MenuItem("Delete a Block", "Lets you delete a block via an ID")
+                new MenuItem("Delete a Block", "Lets you delete a block via an ID"),
+                new MenuItem("Edit a Block", "Lets you edit a block's attribute via an ID")
         });
 
 
@@ -141,21 +170,10 @@ public class MainApp
                             boolean addingBlocks = true;
 
                             while(addingBlocks) {
-                                System.out.print("Enter the name (or enter \"Close\" to exit): ");
-                                String name = key.nextLine();
 
-                                if(!name.equalsIgnoreCase("close")) {
+                                blockToAdd = createBlock();
 
-                                    System.out.print("Enter the hardness: ");
-                                    double hardness = key.nextDouble();
-
-                                    System.out.print("Enter the blast resistance: ");
-                                    double blastResistance = key.nextDouble();
-
-                                    System.out.print("Is gravity affected? (0 = False, 1 = True): ");
-                                    boolean gravityAffected = (key.nextInt() == 0) ? false : true;
-
-                                    blockToAdd = new Block(name, hardness, blastResistance, gravityAffected);
+                                if(blockToAdd != null) {
 
                                     System.out.print(blockToAdd + "\nWould you like to add this block to the database? (0 = False, 1 = True): ");
 
@@ -188,6 +206,28 @@ public class MainApp
 
                             if (key.nextInt() == 1) {
                                 IBlockDao.deleteBlockById(id);
+                            }
+
+                            break;
+                        case 4:
+                            List<Block> allBlocks = IBlockDao.findAllBlocks();
+
+                            for(Block block : allBlocks){
+                                System.out.println(block);
+                            }
+
+                            System.out.print("Which block would you like to edit (Enter the ID): ");
+                            id = key.nextInt(); //error handling needed :3
+
+                            blockById = IBlockDao.getBlockById(id);
+
+                            System.out.print(blockById + "\nAre you sure you would like to edit this block? (0 = False, 1 = True): ");
+
+
+                            if (key.nextInt() == 1) {
+                                Block editedBlock = createBlock();
+                                if(editedBlock != null)
+                                    IBlockDao.updateBlockByID(id, editedBlock);
                             }
 
                             break;

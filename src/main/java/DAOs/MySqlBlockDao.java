@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import com.google.gson.Gson;
+
 /** Base code taken from oop-data-access-layer-sample-1
  *  Rewritten by Jakub Polacek and Ruby :3
  *  Methods/features added over time by the group
@@ -295,5 +297,37 @@ public class MySqlBlockDao extends MySqlDao implements BlockDaoInterface
     public List<Block> findBlocksUsingFilter(Predicate<Block> filter) throws DaoException
     {
         return findAllBlocks().stream().filter(filter).collect(Collectors.toList());
+    }
+
+    /**
+    Feature 8 - key entity to json
+    Ruby White :D
+    24/03/2024
+     */
+
+    public String blockToJson(int id){ //serialises by id passes through
+        String jsonString = "";
+        try {
+            Block blockToSerialise = getBlockById(id);
+
+            Gson gsonParser = new Gson();
+
+            jsonString = gsonParser.toJson(blockToSerialise);
+        }
+        catch (DaoException e) {
+            throw new RuntimeException(e);
+        }
+
+        return jsonString;
+    }
+
+    public String blockToJson(Block blockToSerialise){ // serialises by key entity passed through
+        String jsonString = "";
+
+        Gson gsonParser = new Gson();
+
+        jsonString = gsonParser.toJson(blockToSerialise);
+
+        return jsonString;
     }
 }
