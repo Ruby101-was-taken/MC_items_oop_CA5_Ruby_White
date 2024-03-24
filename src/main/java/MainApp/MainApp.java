@@ -47,6 +47,20 @@ public class MainApp
         return newBlock;
     }
 
+
+    public static void printAllBlocks(BlockDaoInterface IBlockDao){
+        List<Block> allBlocks = null;
+        try {
+            allBlocks = IBlockDao.findAllBlocks();
+        } catch (DaoException e) {
+            throw new RuntimeException(e);
+        }
+
+        for(Block block : allBlocks){
+            System.out.println(block);
+        }
+    }
+
     /**
      Menu by Ruby 18/03/24
      */
@@ -59,14 +73,16 @@ public class MainApp
         BlockDaoInterface IBlockDao = new MySqlBlockDao();
 
 
-        MenuItem mainMenu = new MenuItem("Main Menu", "Return to the main menu");
+        MenuItem mainMenu = new MenuItem("Main Menu", "Return to the main menu.");
         MenuItem getMenu = new MenuItem("Get Menu", "Retrieve info from the database.");
-        MenuItem editMenu = new MenuItem("Edit Menu", "Edit info in the database");
-        MenuItem filterMenu = new MenuItem("Get Block By Filter", "Returns blocks via a filter");
+        MenuItem editMenu = new MenuItem("Edit Menu", "Edit info in the database.");
+        MenuItem filterMenu = new MenuItem("Get Block By Filter", "Returns blocks via a filter.");
+        MenuItem jsonMenu = new MenuItem("Get Block As JSON", "Returns blocks in JSON formatting.");
 
         mainMenu.addMenuItems(new MenuItem[]{
                 getMenu,
-                editMenu
+                editMenu,
+                jsonMenu
         });
 
         /*
@@ -92,6 +108,12 @@ public class MainApp
                 new MenuItem("Edit a Block", "Lets you edit a block's attribute via an ID")
         });
 
+        jsonMenu.addMenuItems(new MenuItem[]{
+                mainMenu,
+                new MenuItem("Get JSON by ID", "Returns the JSON string for a block from the database"),
+                new MenuItem("Get JSON by Block", "Returns the JSON string for a block made from entered values")
+        });
+
 
         //setting the first menu
         MenuItem currentMenu = mainMenu;
@@ -110,6 +132,9 @@ public class MainApp
                         case 2:
                             currentMenu = currentMenu.getMenuItems().get(menuChoice-1);
                             break;
+                        case 3:
+                            currentMenu = currentMenu.getMenuItems().get(menuChoice-1);
+                            break;
                     }
                 }
 
@@ -120,11 +145,7 @@ public class MainApp
                             currentMenu = currentMenu.getMenuItems().get(menuChoice-1);
                             break;
                         case 2:
-                            List<Block> allBlocks = IBlockDao.findAllBlocks();
-
-                            for(Block block : allBlocks){
-                                System.out.println(block);
-                            }
+                            printAllBlocks(IBlockDao);
                             break;
                         case 3:
                             int id = key.nextInt(); //error handling needed :3
@@ -197,6 +218,8 @@ public class MainApp
                             }
                             break;
                         case 3:
+                            printAllBlocks(IBlockDao);
+
                             int id = key.nextInt(); //error handling needed :3
 
                             Block blockById = IBlockDao.getBlockById(id);
@@ -210,11 +233,7 @@ public class MainApp
 
                             break;
                         case 4:
-                            List<Block> allBlocks = IBlockDao.findAllBlocks();
-
-                            for(Block block : allBlocks){
-                                System.out.println(block);
-                            }
+                            printAllBlocks(IBlockDao);
 
                             System.out.print("Which block would you like to edit (Enter the ID): ");
                             id = key.nextInt(); //error handling needed :3
@@ -228,6 +247,37 @@ public class MainApp
                                 Block editedBlock = createBlock();
                                 if(editedBlock != null)
                                     IBlockDao.updateBlockByID(id, editedBlock);
+                            }
+
+                            break;
+                    }
+                }
+
+                /**EDIT MENU**/
+                else if(jsonMenu == currentMenu) {
+                    switch (menuChoice) {
+                        case 1:
+                            currentMenu = currentMenu.getMenuItems().get(menuChoice - 1);
+                            break;
+                        case 2:
+                            printAllBlocks(IBlockDao);
+
+                            System.out.print("Enter an ID: ");
+                            int id = key.nextInt();
+
+                            String blockAsJson = IBlockDao.blockToJson(id);
+
+                            System.out.println("This block as Json is this:\n" + blockAsJson);
+
+                            break;
+                        case 3:
+
+                            Block newBlock = createBlock();
+
+                            if(newBlock != null) {
+                                blockAsJson = IBlockDao.blockToJson(newBlock);
+
+                                System.out.println("Your block as Json is this:\n" + blockAsJson);
                             }
 
                             break;
