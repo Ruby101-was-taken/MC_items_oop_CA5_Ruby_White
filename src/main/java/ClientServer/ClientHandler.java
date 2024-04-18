@@ -15,6 +15,8 @@ import com.google.gson.Gson;
  *  Written by Jakub Polacek on 13-14.4. 2024
  *  Used sample code from class as reference:
  *  github.com/logued/oop-client-server-multithreaded-2024
+ *
+ *  Added to by Ruby White 18/04/2024
  */
 
 public class ClientHandler implements Runnable
@@ -57,7 +59,7 @@ public class ClientHandler implements Runnable
                     clientWriter.println(blockAsJson);
                     System.out.println("Server message: JSON string of Block by id " + message + " sent to client.");
                 }
-                else if (request.substring(0, 3).equals("F10"))
+                else if (request.substring(0, 3).equals("F11"))
                 {
                     String message = request.substring(3);
                     Gson gsonParser = new Gson();

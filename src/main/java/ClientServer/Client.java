@@ -80,9 +80,9 @@ public class Client
                     System.out.println(block.toString());
                 }
                 // By Ruby :3
-                else if (clientCommand.equals("F10"))
+                else if (clientCommand.equals("F11"))
                 {
-                    System.out.println("Function 10 selected - Display Block by ID");
+                    System.out.println("Function 11 selected - Insert Block");
                     Block blockToAdd = createBlock();
 
 
@@ -91,7 +91,7 @@ public class Client
                     String blockJson = gsonParser.toJson(blockToAdd);
 
 
-                    out.println("F10"+blockJson);
+                    out.println("F11"+blockJson);
                     String response = in.readLine();
                     //TODO make output nicer
                     System.out.println(response);
