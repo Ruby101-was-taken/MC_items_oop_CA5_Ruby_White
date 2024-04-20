@@ -1,9 +1,6 @@
 package ClientServer;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
 import DAOs.BlockDaoInterface;
 import DAOs.MySqlBlockDao;
@@ -21,6 +18,8 @@ import com.google.gson.Gson;
 
 public class ClientHandler implements Runnable
 {
+    private  DataOutputStream dataOutputStream = null;
+    private  DataInputStream dataInputStream = null;
     BufferedReader clientReader;
     PrintWriter clientWriter;
     Socket clientSocket;
@@ -74,6 +73,32 @@ public class ClientHandler implements Runnable
                     clientWriter.println("Block added.");
                     System.out.println("Server message: JSON string of Block by id " + message + " sent to client.");
                 }
+                else if(request.substring(0,3).equals("F13")){
+                    //
+                    File folder = new File("your/path");
+                    File[] listOfFiles = folder.listFiles();
+                    if(listOfFiles != null) {
+                        for (int i = 0; i < listOfFiles.length; i++) {
+                            if (listOfFiles[i].isFile()) {
+                                System.out.println("File " + listOfFiles[i].getName());
+                            } else if (listOfFiles[i].isDirectory()) {
+                                System.out.println("Directory " + listOfFiles[i].getName());
+                            }
+                        }
+                    }
+                }
+                else if(request.substring(0,3).equals("img")){
+
+                    dataInputStream = new DataInputStream(clientSocket.getInputStream());
+                    dataOutputStream = new DataOutputStream( clientSocket.getOutputStream());
+                    System.out.println("Sending the File to the Server");
+                    // Call SendFile Method
+                    try {
+                        sendFile("serverImages/grass.png");
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                }
                 else if (request.startsWith("quit"))
                 {
                     clientWriter.println("Sorry to see you leaving. Goodbye.");
@@ -104,5 +129,31 @@ public class ClientHandler implements Runnable
             }
         }
         System.out.println("Server: (ClientHandler): Handler for Client " + clientNumber + " is terminating .....");
+    }
+
+
+    // sendFile function define here
+    private void sendFile(String path)
+            throws Exception
+    {
+        int bytes = 0;
+        // Open the File at the specified location (path)
+        File file = new File(path);
+        FileInputStream fileInputStream = new FileInputStream(file);
+
+        // send the length (in bytes) of the file to the server
+        dataOutputStream.writeLong(file.length());
+
+        // Here we break file into chunks
+        byte[] buffer = new byte[4 * 1024]; // 4 kilobyte buffer
+
+        // read bytes from file into the buffer until buffer is full or we reached end of file
+        while ((bytes = fileInputStream.read(buffer))!= -1) {
+            // Send the buffer contents to Server Socket, along with the count of the number of bytes
+            dataOutputStream.write(buffer, 0, bytes);
+            dataOutputStream.flush();   // force the data into the stream
+        }
+        // close the file
+        fileInputStream.close();
     }
 }
