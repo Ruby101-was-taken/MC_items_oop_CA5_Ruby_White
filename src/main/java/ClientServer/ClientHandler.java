@@ -73,30 +73,49 @@ public class ClientHandler implements Runnable
                     clientWriter.println("Block added.");
                     System.out.println("Server message: JSON string of Block by id " + message + " sent to client.");
                 }
+                //by Ruby 20/4/2024
                 else if(request.substring(0,3).equals("F13")){
-                    //
-                    File folder = new File("your/path");
+                    // https://stackoverflow.com/a/5694398 referenced on 20/04/2024
+                    File folder = new File("serverImages");
                     File[] listOfFiles = folder.listFiles();
+
+                    String allImages = "";
+
+
                     if(listOfFiles != null) {
                         for (int i = 0; i < listOfFiles.length; i++) {
+                            System.out.println(listOfFiles[i].getName());
                             if (listOfFiles[i].isFile()) {
-                                System.out.println("File " + listOfFiles[i].getName());
-                            } else if (listOfFiles[i].isDirectory()) {
-                                System.out.println("Directory " + listOfFiles[i].getName());
+                                allImages += listOfFiles[i].getName().substring(0, listOfFiles[i].getName().length()-4) + ((i != listOfFiles.length-1) ? " - " : "");
                             }
                         }
                     }
+
+                    clientWriter.println(allImages);
                 }
+                //by Ruby 20/4/2024
                 else if(request.substring(0,3).equals("img")){
 
                     dataInputStream = new DataInputStream(clientSocket.getInputStream());
                     dataOutputStream = new DataOutputStream( clientSocket.getOutputStream());
-                    System.out.println("Sending the File to the Server");
                     // Call SendFile Method
-                    try {
-                        sendFile("serverImages/grass.png");
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
+                    String imgPath = "serverImages/" + request.substring(3);
+                    File f = new File(imgPath);
+                    if(f.exists() && !f.isDirectory()) { //https://stackoverflow.com/a/1816676 on the 20/4/2024
+                        try {
+                            System.out.println("Successfully sent image!");
+                            sendFile(imgPath);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    else{
+                        try {
+                            System.out.println("Sent a default image since the file \"" + imgPath + "\" does not exist.");
+                            sendFile("serverImages/noImage.png"); //sends default image if one does not exist
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
                 else if (request.startsWith("quit"))

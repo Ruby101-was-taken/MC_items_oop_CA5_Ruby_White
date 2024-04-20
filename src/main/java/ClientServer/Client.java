@@ -64,7 +64,7 @@ public class Client
             System.out.println("Client message: The Client is running and has connected to the server");
             Scanner keyboardInput = new Scanner(System.in);
             System.out.println("Please enter a command: ");
-            System.out.println("Available commands: F9, quit");
+            System.out.println("Available commands: F9, F11, F13, quit");
             String clientCommand = keyboardInput.nextLine();
 
             while(true)
@@ -97,13 +97,27 @@ public class Client
                     String response = in.readLine();
                     //TODO make output nicer
                     System.out.println(response);
+
+                //by Ruby 20/4/2024
                 } else if (clientCommand.equals("F13")) {
                     dataInputStream = new DataInputStream(socket.getInputStream());
                     dataOutputStream = new DataOutputStream( socket.getOutputStream());
                     // Here we call receiveFile define new for that file
+
                     out.println("F13");
+                    System.out.println("All Images:");
+
+                    String response = in.readLine();
+
+                    System.out.println(response);
+
+                    Scanner key = new Scanner(System.in); //making a new scanner since using the same one with next line can be funky
+
+                    String imageName = key.nextLine() + ".png";
+
+                    out.println("img" + imageName);
                     try {
-                        receiveFile("clientImages/grass.png");
+                        receiveFile("clientImages/" + imageName);
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -173,7 +187,7 @@ public class Client
 
         System.out.println("File is Received");
 
-        System.out.println("Look in the images folder to see the transferred file: parrot_image_received.jpg");
+        System.out.println("Look in the \"clientImages\" folder to see the transferred image.");
         fileOutputStream.close();
     }
 }
