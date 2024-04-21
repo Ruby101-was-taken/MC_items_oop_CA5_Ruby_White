@@ -58,6 +58,18 @@ public class ClientHandler implements Runnable
                     clientWriter.println(blockAsJson);
                     System.out.println("Server message: JSON string of Block by id " + message + " sent to client.");
                 }
+                if (request.startsWith("F10")) //Feature 10 - Hannah
+                {
+                    String blocksAsJson = null;
+                    try { // try catch moved here by Ruby
+                        blocksAsJson = IBlockDao.allBlocksToJson();
+                    } catch (DaoException e) {
+                        System.out.println("Server message: Failed to access database.");
+                        throw new RuntimeException(e);
+                    }
+                    clientWriter.println(blocksAsJson);
+                    System.out.println("Server message: List of all blocks in database sent to client.");
+                }
                 else if (request.substring(0, 3).equals("F11"))
                 {
                     String message = request.substring(3);
@@ -72,6 +84,18 @@ public class ClientHandler implements Runnable
 
                     clientWriter.println("Block added.");
                     System.out.println("Server message: JSON string of Block by id " + message + " sent to client.");
+                }
+                else if(request.startsWith("F12"))
+                {
+                    int idToDelete = Integer.parseInt(request.substring(3));
+                    String block = null;
+                    try { //try catch moved here by Ruby
+                        block = IBlockDao.blockToJson(IBlockDao.deleteBlockById(idToDelete));
+                    } catch (DaoException e) {
+                        throw new RuntimeException(e);
+                    }
+                    clientWriter.println(block);
+                    System.out.println("Server message: Block by id " + idToDelete + " deleted.");
                 }
                 //by Ruby 20/4/2024
                 else if(request.substring(0,3).equals("F13")){

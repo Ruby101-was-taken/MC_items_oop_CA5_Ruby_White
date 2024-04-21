@@ -330,4 +330,18 @@ public class MySqlBlockDao extends MySqlDao implements BlockDaoInterface
 
         return jsonString;
     }
+    public String allBlocksToJson() throws DaoException
+    {
+        try {
+            List<Block> blocks = findAllBlocks();
+            Gson gsonParser = new Gson();
+            String blocksAsJson = gsonParser.toJson(blocks);
+
+            return blocksAsJson;
+        }
+        catch(DaoException e) {
+            return null;
+        }
+
+    }
 }

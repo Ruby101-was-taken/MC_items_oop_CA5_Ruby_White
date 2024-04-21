@@ -10,10 +10,12 @@ package ClientServer;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.List;
 import java.util.Scanner;
 import com.google.gson.Gson;
 import DTOs.Block;
-
+import java.lang.reflect.Type;
+import com.google.gson.reflect.TypeToken;
 
 
 public class Client
@@ -81,6 +83,20 @@ public class Client
                     //TODO make output nicer
                     System.out.println(block.toString());
                 }
+                else if (clientCommand.equals("F10")) //Feature 10 - Hannah
+                {
+                    System.out.println("Function 10 selected - Display All Blocks");
+                    out.println("F10");
+                    String response = in.readLine();
+
+                    Gson parse = new Gson();
+                    //source for below scuffed solution: https://stackoverflow.com/questions/15332733/how-to-convert-list-data-into-json-in-java
+                    Type listOfBlock = new TypeToken<List<Block>>(){}.getType();
+                    List<Block> allBlocks = parse.fromJson(response, listOfBlock);
+
+                    System.out.println(formatList(allBlocks));
+
+                }
                 // By Ruby :3
                 else if (clientCommand.equals("F11"))
                 {
@@ -98,8 +114,23 @@ public class Client
                     //TODO make output nicer
                     System.out.println(response);
 
+
+                }
+
+                else if(clientCommand.equals("F12"))
+                {
+                    System.out.println("Function 12 selected - Delete Block by ID");
+                    System.out.println("Please input the ID of the block to be deleted:");
+                    clientCommand = keyboardInput.nextLine();
+                    out.println("F12"+clientCommand);
+                    String response = in.readLine();
+                    Gson gsonParser = new Gson();
+                    Block block = gsonParser.fromJson(response,Block.class);
+                    System.out.println("Block deleted: " + block);
+                }
+
                 //by Ruby 20/4/2024
-                } else if (clientCommand.equals("F13")) {
+                else if (clientCommand.equals("F13")) {
                     dataInputStream = new DataInputStream(socket.getInputStream());
                     dataOutputStream = new DataOutputStream( socket.getOutputStream());
                     // Here we call receiveFile define new for that file
@@ -147,6 +178,19 @@ public class Client
             System.out.println("Client message: IOException: " + e);
         }
         System.out.println("Exiting client, server may still be running.");
+    }
+    private static String formatList(List<Block> list)
+    {
+        String out = "";
+
+        for(int i = 0; i<list.size(); i++){
+            Block b = list.get(i);
+            out = out + (b.getName() + " (ID " + b.getId() + ")\n"
+                    + "Hardness: " + b.getHardness() + "\tBlast resistance: " + b.getBlastResistance() + "\n"
+                    + "Affected by gravity: " + b.isGravityAffected() + "\n\n");
+        }
+
+        return out;
     }
 
     private void receiveFile(String fileName)
